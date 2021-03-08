@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions
+	xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+	xmlns:activiti="http://activiti.org/bpmn"
+	xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+	xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+	xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+	xmlns:tns="http://www.activiti.org/test"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:yaoqiang="http://bpmn.sourceforge.net"
+	exporter="Yaoqiang BPMN Editor" exporterVersion="5.3"
+	expressionLanguage="http://www.w3.org/1999/XPath" id="_1613992971688"
+	name="" targetNamespace="http://www.activiti.org/test"
+	typeLanguage="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+	<process id="LicenseApplicationProcessController"
+		isClosed="false" isExecutable="true"
+		name="License Application Process Controller" processType="None">
+		<extensionElements>
+			<yaoqiang:description />
+			<yaoqiang:pageFormat height="841.8897637795276"
+				imageableHeight="831.8897637795276"
+				imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0"
+				orientation="0" width="598.1102362204724" />
+			<yaoqiang:page background="#FFFFFF" horizontalCount="2"
+				verticalCount="1" />
+		</extensionElements>
+
+		<startEvent id="startevent" name="Start">
+		</startEvent>
+
+		<sequenceFlow
+			id="startevent_to_CompleteApplicationFields" sourceRef="startevent"
+			targetRef="CompleteApplicationFields" />
+		<userTask completionQuantity="1"
+			id="CompleteApplicationFields" name="Complete Application Fields"
+			startQuantity="1">
+		</userTask>
+		<sequenceFlow
+			id="CompleteApplicationFields_to_isValidApplicationFields"
+			sourceRef="CompleteApplicationFields"
+			targetRef="isValidApplicationFields" />
+		<exclusiveGateway id="isValidApplicationFields"
+			name="is Valid Application Fields">
+		</exclusiveGateway>
+		<sequenceFlow
+			id="isValidApplicationFields_to_NotifyApplicantInvalidApplicationFields"
+			name="No" sourceRef="isValidApplicationFields"
+			targetRef="NotifyApplicantInvalidApplicationFields">
+			<conditionExpression xsi:type="tFormalExpression">
+       			<![CDATA[${valid == "no"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<serviceTask completionQuantity="1"
+			id="NotifyApplicantInvalidApplicationFields"
+			implementation="NotifyApplicantInvalidApplicationFields_LicenseApplicationProcess"
+			isForCompensation="false"
+			name="Notify Applicant Invalid Application Fields" startQuantity="1">
+		</serviceTask>
+		<sequenceFlow
+			id="NotifyApplicantInvalidApplicationFields_to_CompleteApplicationFields"
+			sourceRef="NotifyApplicantInvalidApplicationFields"
+			targetRef="CompleteApplicationFields" />
+		<sequenceFlow
+			id="isValidApplicationFields_to_UploadRequiredDocuments" name="Yes"
+			sourceRef="isValidApplicationFields"
+			targetRef="UploadRequiredDocuments">
+			<conditionExpression xsi:type="tFormalExpression">
+        		<![CDATA[${valid == "yes"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<userTask completionQuantity="1" id="UploadRequiredDocuments"
+			implementation="##unspecified" isForCompensation="false"
+			name="Upload Required Documents" startQuantity="1">
+			<incoming>isValidApplicationFields_to_UploadRequiredDocuments</incoming>
+			<incoming>NotifyApplicantInvalidDocuments_to_UploadRequiredDocuments</incoming>
+			<outgoing>UploadRequiredDocuments_to_isValidDocuments</outgoing>
+		</userTask>
+		<sequenceFlow
+			id="UploadRequiredDocuments_to_isValidDocuments"
+			sourceRef="UploadRequiredDocuments" targetRef="isValidDocuments" />
+		<exclusiveGateway gatewayDirection="Unspecified"
+			id="isValidDocuments" name="is valid documents">
+			<incoming>UploadRequiredDocuments_to_isValidDocuments</incoming>
+			<outgoing>isValidDocuments_to_NotifyApplicantInvalidDocuments</outgoing>
+			<outgoing>isValidDocuments_to_payment</outgoing>
+		</exclusiveGateway>
+		<sequenceFlow
+			id="isValidDocuments_to_NotifyApplicantInvalidDocuments" name="No"
+			sourceRef="isValidDocuments"
+			targetRef="NotifyApplicantInvalidDocuments">
+			<conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${valid == "no"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<sequenceFlow id="isValidDocuments_to_payment" name="Yes"
+			sourceRef="isValidDocuments" targetRef="payment">
+			<conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${valid == "yes"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<serviceTask completionQuantity="1"
+			id="NotifyApplicantInvalidDocuments"
+			implementation="NotifyApplicantInvalidDocuments_LicenseApplicationProcess"
+			isForCompensation="false" name="Notify Applicant Invalid Documents"
+			startQuantity="1">
+			<incoming>isValidDocuments_to_NotifyApplicantInvalidDocuments</incoming>
+			<outgoing>NotifyApplicantInvalidDocuments_to_UploadRequiredDocuments</outgoing>
+		</serviceTask>
+		<sequenceFlow
+			id="NotifyApplicantInvalidDocuments_to_UploadRequiredDocuments"
+			sourceRef="NotifyApplicantInvalidDocuments"
+			targetRef="UploadRequiredDocuments" />
+		<userTask completionQuantity="1" id="payment"
+			implementation="##unspecified" isForCompensation="false"
+			name="Payment" startQuantity="1">
+			<incoming>isValidDocuments_to_payment</incoming>
+			<incoming>NotifyApplicantPaymentFailed_to_payment</incoming>
+			<outgoing>payment_to_isPaymentCompleted</outgoing>
+		</userTask>
+		<sequenceFlow id="payment_to_isPaymentCompleted"
+			sourceRef="payment" targetRef="isPaymentCompleted" />
+		<exclusiveGateway gatewayDirection="Unspecified"
+			id="isPaymentCompleted" name="is payment completed">
+			<incoming>payment_to_isPaymentCompleted</incoming>
+			<outgoing>isPaymentCompleted_to_VerifyPayment</outgoing>
+			<outgoing>isPaymentCompleted_to_NotifyApplicantPaymentFailed</outgoing>
+		</exclusiveGateway>
+		<sequenceFlow id="isPaymentCompleted_to_VerifyPayment"
+			name="Yes" sourceRef="isPaymentCompleted" targetRef="VerifyPayment">
+			<conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${valid == "yes"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<sequenceFlow
+			id="isPaymentCompleted_to_NotifyApplicantPaymentFailed" name="No"
+			sourceRef="isPaymentCompleted"
+			targetRef="NotifyApplicantPaymentFailed">
+			<conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[${valid == "no"}]]>
+			</conditionExpression>
+		</sequenceFlow>
+		<userTask completionQuantity="1" id="VerifyPayment"
+			implementation="##unspecified" isForCompensation="false"
+			name="Verify Payment" startQuantity="1">
+			<incoming>isPaymentCompleted_to_VerifyPayment</incoming>
+			<outgoing>VerifyPayment_to_GenerateReceipt</outgoing>
+		</userTask>
+		<serviceTask completionQuantity="1"
+			id="NotifyApplicantPaymentFailed"
+			implementation="NotifyApplicantPaymentFailed_LicenseApplicationProcess"
+			isForCompensation="false" name="Notify Applicant Payment Failed"
+			startQuantity="1">
+			<incoming>isPaymentCompleted_to_NotifyApplicantPaymentFailed</incoming>
+			<outgoing>NotifyApplicantPaymentFailed_to_payment</outgoing>
+		</serviceTask>
+		<sequenceFlow
+			id="NotifyApplicantPaymentFailed_to_payment"
+			sourceRef="NotifyApplicantPaymentFailed" targetRef="payment" />
+		<sequenceFlow id="VerifyPayment_to_GenerateReceipt"
+			sourceRef="VerifyPayment" targetRef="GenerateReceipt" />
+		<serviceTask completionQuantity="1" id="GenerateReceipt"
+			implementation="GenerateReceipt_LicenseApplicationProcess"
+			isForCompensation="false" name="Generate Receipt" startQuantity="1">
+			<incoming>VerifyPayment_to_GenerateReceipt</incoming>
+			<outgoing>GenerateReceipt_to_PrintAndSendReceipt</outgoing>
+		</serviceTask>
+		<sequenceFlow id="GenerateReceipt_to_PrintAndSendReceipt"
+			sourceRef="GenerateReceipt" targetRef="PrintAndSendReceipt" />
+		<serviceTask completionQuantity="1"
+			id="PrintAndSendReceipt"
+			implementation="PrintAndSendReceipt_LicenseApplicationProcess"
+			isForCompensation="false" name="Print And Send Receipt"
+			startQuantity="1">
+			<incoming>GenerateReceipt_to_PrintAndSendReceipt</incoming>
+			<outgoing>startevent_to_CompleteApplicationFields3</outgoing>
+		</serviceTask>
+		<sequenceFlow
+			id="startevent_to_CompleteApplicationFields3"
+			sourceRef="PrintAndSendReceipt" targetRef="endevent1" />
+		<endEvent id="endevent1" name="End">
+			<incoming>startevent_to_CompleteApplicationFields3</incoming>
+			<inputSet />
+		</endEvent>
+	</process>
+	<bpmndi:BPMNDiagram
+		id="Yaoqiang_Diagram-LicenseApplicationProcessController"
+		name="Untitled Diagram" resolution="96.0">
+		<bpmndi:BPMNPlane
+			bpmnElement="LicenseApplicationProcessController">
+			<bpmndi:BPMNShape bpmnElement="startevent"
+				id="Yaoqiang-startevent">
+				<omgdc:Bounds height="32.0" width="32.0" x="142.0"
+					y="218.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="33.0" x="141.5"
+						y="258.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="CompleteApplicationFields"
+				id="Yaoqiang-CompleteApplicationFields">
+				<omgdc:Bounds height="71.0" width="105.0" x="220.0"
+					y="200.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="46.8" width="68.0" x="238.5"
+						y="214.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="isValidApplicationFields"
+				id="Yaoqiang-isValidApplicationFields" isMarkerVisible="true">
+				<omgdc:Bounds height="42.0" width="42.0" x="370.0"
+					y="216.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="149.0" x="316.5"
+						y="260.0" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="NotifyApplicantInvalidApplicationFields"
+				id="Yaoqiang-NotifyApplicantInvalidApplicationFields">
+				<omgdc:Bounds height="55.0" width="105.0" x="336.0"
+					y="68.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="60.8" width="95.0" x="341.0"
+						y="67.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="UploadRequiredDocuments"
+				id="Yaoqiang-UploadRequiredDocuments">
+				<omgdc:Bounds height="62.0" width="105.0" x="462.0"
+					y="205.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="46.8" width="69.0" x="480.0"
+						y="214.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="isValidDocuments"
+				id="Yaoqiang-isValidDocuments" isMarkerVisible="true">
+				<omgdc:Bounds height="42.0" width="42.0" x="610.0"
+					y="217.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="112.0" x="575.0"
+						y="261.0" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="NotifyApplicantInvalidDocuments"
+				id="Yaoqiang-NotifyApplicantInvalidDocuments">
+				<omgdc:Bounds height="55.0" width="105.0" x="578.0"
+					y="68.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="46.8" width="95.0" x="583.0"
+						y="74.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="payment"
+				id="Yaoqiang-payment">
+				<omgdc:Bounds height="55.0" width="105.0" x="695.0"
+					y="210.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="56.0" x="719.5"
+						y="230.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="isPaymentCompleted"
+				id="Yaoqiang-isPaymentCompleted" isMarkerVisible="true">
+				<omgdc:Bounds height="42.0" width="42.0" x="845.0"
+					y="218.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="132.0" x="800.0"
+						y="262.0" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape
+				bpmnElement="NotifyApplicantPaymentFailed"
+				id="Yaoqiang-NotifyApplicantPaymentFailed">
+				<omgdc:Bounds height="55.0" width="105.0" x="813.0"
+					y="330.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="32.8" width="95.0" x="818.0"
+						y="343.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="GenerateReceipt"
+				id="Yaoqiang-GenerateReceipt">
+				<omgdc:Bounds height="55.0" width="105.0" x="1080.0"
+					y="211.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="32.8" width="59.0" x="1103.0"
+						y="224.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="PrintAndSendReceipt"
+				id="Yaoqiang-PrintAndSendReceipt">
+				<omgdc:Bounds height="80.0" width="105.0" x="1220.0"
+					y="199.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="32.8" width="90.0" x="1227.5"
+						y="224.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="endevent1"
+				id="Yaoqiang-endevent1">
+				<omgdc:Bounds height="32.0" width="32.0" x="1380.0"
+					y="218.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="27.0" x="1382.5"
+						y="258.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="VerifyPayment"
+				id="Yaoqiang-VerifyPayment">
+				<omgdc:Bounds height="55.0" width="105.0" x="930.0"
+					y="211.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="94.0" x="935.5"
+						y="231.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNEdge
+				bpmnElement="isValidApplicationFields_to_NotifyApplicantInvalidApplicationFields"
+				id="Yaoqiang-isValidApplicationFields_to_NotifyApplicantInvalidApplicationFields">
+				<omgdi:waypoint x="391.0" y="217.0" />
+				<omgdi:waypoint x="391.0" y="123.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="46.8" width="104.0" x="339.0"
+						y="146.85" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="NotifyApplicantPaymentFailed_to_payment"
+				id="Yaoqiang-NotifyApplicantPaymentFailed_to_payment">
+				<omgdi:waypoint x="813.5" y="357.0" />
+				<omgdi:waypoint x="747.0" y="357.0" />
+				<omgdi:waypoint x="747.0" y="265.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="744.0"
+						y="335.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="UploadRequiredDocuments_to_isValidDocuments"
+				id="Yaoqiang-UploadRequiredDocuments_to_isValidDocuments">
+				<omgdi:waypoint x="567.5" y="236.0" />
+				<omgdi:waypoint x="611.0" y="238.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="585.5"
+						y="228.35" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="payment_to_isPaymentCompleted"
+				id="Yaoqiang-payment_to_isPaymentCompleted">
+				<omgdi:waypoint x="800.5" y="237.5" />
+				<omgdi:waypoint x="846.0" y="239.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="819.5"
+						y="229.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="NotifyApplicantInvalidDocuments_to_UploadRequiredDocuments"
+				id="Yaoqiang-NotifyApplicantInvalidDocuments_to_UploadRequiredDocuments">
+				<omgdi:waypoint x="578.5" y="95.0" />
+				<omgdi:waypoint x="514.0" y="95.0" />
+				<omgdi:waypoint x="514.0" y="205.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="511.0"
+						y="108.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="isValidDocuments_to_NotifyApplicantInvalidDocuments"
+				id="Yaoqiang-isValidDocuments_to_NotifyApplicantInvalidDocuments">
+				<omgdi:waypoint x="631.0" y="218.0" />
+				<omgdi:waypoint x="631.0" y="123.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="60.8" width="104.0" x="579.0"
+						y="140.35" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="NotifyApplicantInvalidApplicationFields_to_CompleteApplicationFields"
+				id="Yaoqiang-NotifyApplicantInvalidApplicationFields_to_CompleteApplicationFields">
+				<omgdi:waypoint x="336.5" y="95.0" />
+				<omgdi:waypoint x="272.0" y="95.0" />
+				<omgdi:waypoint x="272.0" y="200.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="269.0"
+						y="106.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="isPaymentCompleted_to_VerifyPayment"
+				id="Yaoqiang-isPaymentCompleted_to_VerifyPayment">
+				<omgdi:waypoint x="887.0" y="239.0" />
+				<omgdi:waypoint x="930.5" y="238.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="60.8" width="110.0" x="853.5"
+						y="208.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="startevent_to_CompleteApplicationFields3"
+				id="Yaoqiang-startevent_to_CompleteApplicationFields3">
+				<omgdi:waypoint x="1325.5" y="239.0" />
+				<omgdi:waypoint x="1380.5078144082804" y="234.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="1349.5"
+						y="226.59" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="startevent_to_CompleteApplicationFields"
+				id="Yaoqiang-startevent_to_CompleteApplicationFields">
+				<omgdi:waypoint x="174.49218559171948" y="234.0" />
+				<omgdi:waypoint x="220.5" y="235.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="194.0"
+						y="225.84" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="isValidDocuments_to_payment"
+				id="Yaoqiang-isValidDocuments_to_payment">
+				<omgdi:waypoint x="652.0" y="238.0" />
+				<omgdi:waypoint x="695.5" y="237.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="60.8" width="110.0" x="618.5"
+						y="207.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="VerifyPayment_to_GenerateReceipt"
+				id="Yaoqiang-VerifyPayment_to_GenerateReceipt">
+				<omgdi:waypoint x="1035.5" y="238.5" />
+				<omgdi:waypoint x="1080.5" y="238.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="1055.0"
+						y="229.1" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="isPaymentCompleted_to_NotifyApplicantPaymentFailed"
+				id="Yaoqiang-isPaymentCompleted_to_NotifyApplicantPaymentFailed">
+				<omgdi:waypoint x="866.0" y="260.0" />
+				<omgdi:waypoint x="866.0" y="330.5" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="60.8" width="104.0" x="814.0"
+						y="264.85" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="GenerateReceipt_to_PrintAndSendReceipt"
+				id="Yaoqiang-GenerateReceipt_to_PrintAndSendReceipt">
+				<omgdi:waypoint x="1185.5" y="238.5" />
+				<omgdi:waypoint x="1220.5" y="239.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="1199.75"
+						y="229.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="CompleteApplicationFields_to_isValidApplicationFields"
+				id="Yaoqiang-CompleteApplicationFields_to_isValidApplicationFields">
+				<omgdi:waypoint x="325.5" y="235.5" />
+				<omgdi:waypoint x="371.0" y="237.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="18.8" width="6.0" x="344.5"
+						y="227.6" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge
+				bpmnElement="isValidApplicationFields_to_UploadRequiredDocuments"
+				id="Yaoqiang-isValidApplicationFields_to_UploadRequiredDocuments">
+				<omgdi:waypoint x="412.0" y="237.0" />
+				<omgdi:waypoint x="462.5" y="236.0" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds height="46.8" width="110.0" x="382.0"
+						y="212.85" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNEdge>
+		</bpmndi:BPMNPlane>
+	</bpmndi:BPMNDiagram>
+</definitions>

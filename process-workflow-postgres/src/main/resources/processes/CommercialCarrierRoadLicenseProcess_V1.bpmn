@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:yaoqiang="http://bpmn.sourceforge.net" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test" exporter="Yaoqiang BPMN Editor" exporterVersion="5.3" id="_1612758704407" name="" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <process id="commercialCarrierRoadLicenseProcess" name="My process" isExecutable="true" isClosed="false" processType="None">
+    <extensionElements>
+      <yaoqiang:description xmlns:yaoqiang="http://bpmn.sourceforge.net"></yaoqiang:description>
+      <yaoqiang:pageFormat xmlns:yaoqiang="http://bpmn.sourceforge.net" height="841.8897637795276" imageableHeight="831.8897637795276" imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0" orientation="0" width="598.1102362204724"></yaoqiang:pageFormat>
+      <yaoqiang:pageFormat xmlns:yaoqiang="http://bpmn.sourceforge.net" height="841.8897637795276" imageableHeight="831.8897637795276" imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0" orientation="0" width="598.1102362204724"></yaoqiang:pageFormat>
+      <yaoqiang:page xmlns:yaoqiang="http://bpmn.sourceforge.net" background="#FFFFFF" horizontalCount="1" verticalCount="1"></yaoqiang:page>
+      <yaoqiang:page xmlns:yaoqiang="http://bpmn.sourceforge.net" background="#FFFFFF" horizontalCount="1" verticalCount="1"></yaoqiang:page>
+    </extensionElements>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <sequenceFlow id="startevent1_to_verifyDocuments" sourceRef="startevent1" targetRef="verifyDocuments"></sequenceFlow>
+ 
+    <userTask id="verifyDocuments" name="Verify Documents" completionQuantity="1" isForCompensation="false" startQuantity="1" activiti:candidateGroups="user"></userTask>
+    <sequenceFlow id="verifyDocuments_to_isValidDocuments" sourceRef="verifyDocuments" targetRef="isValidDocuments"></sequenceFlow>
+ 
+    <exclusiveGateway id="isValidDocuments" name="Exclusive Gateway"></exclusiveGateway>
+ 
+    <sequenceFlow id="isValidDocuments_to_rejectedApplication" sourceRef="isValidDocuments" targetRef="rejectedApplication">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${nextTask == "rejectedApplication"}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="rejectedApplication" name="Rejected Application" implementation="rejectedApplication_CommercialCarrierRoadLicenseProcess"></serviceTask>
+    <sequenceFlow id="rejectedApplication_to_endEvent" sourceRef="rejectedApplication" targetRef="endEvent"></sequenceFlow>
+    
+    <sequenceFlow id="isValidDocuments_to_updateDocuments" sourceRef="isValidDocuments" targetRef="updateDocuments">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${nextTask == "updateDocuments"}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="updateDocuments" name="Update Documents" implementation="updateDocuments_CommercialCarrierRoadLicenseProcess"></serviceTask>
+    <sequenceFlow id="updateDocuments_to_verifyDocuments" sourceRef="updateDocuments" targetRef="verifyDocuments"></sequenceFlow>
+    
+    <sequenceFlow id="isValidDocuments_to_generatePaymentReceipt" sourceRef="isValidDocuments" targetRef="generatePaymentReceipt">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${nextTask == "generatePaymentReceipt"}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="generatePaymentReceipt" name="Generate Payment Receipt"></userTask>
+   
+    <sequenceFlow id="generatePaymentReceipt_to_verifyPayment" sourceRef="generatePaymentReceipt" targetRef="verifyPayment"></sequenceFlow>
+    <userTask id="verifyPayment" name="Verify Payment"></userTask>
+   
+    <sequenceFlow id="verifyPayment_to_dataEntry" sourceRef="verifyPayment" targetRef="dataEntry"></sequenceFlow>
+    <userTask id="dataEntry" name="Data Entry"></userTask>
+   
+    <sequenceFlow id="dataEntry_to_generateTemporaryLicense" sourceRef="dataEntry" targetRef="generateTemporaryLicense"></sequenceFlow>
+    <userTask id="generateTemporaryLicense" name="Generate Temporary License"></userTask>
+
+    <sequenceFlow id="generateTemporaryLicense_to_approvalForLicense" sourceRef="generateTemporaryLicense" targetRef="approvalForLicense"></sequenceFlow>
+    <userTask id="approvalForLicense" name="Approval for License"></userTask>
+
+    <sequenceFlow id="approvalForLicense_to_isLicenseApproved" sourceRef="approvalForLicense" targetRef="isLicenseApproved"></sequenceFlow>
+    <exclusiveGateway id="isLicenseApproved" name="Exclusive Gateway"></exclusiveGateway>
+
+    <sequenceFlow id="isLicenseApproved_to_deliverLicenseToCustomer" sourceRef="isLicenseApproved" targetRef="deliverLicenseToCustomer"></sequenceFlow>
+    <serviceTask id="deliverLicenseToCustomer" name="Deliver License To Customer" implementation="deliverLicenseToCustomer_CommercialCarrierRoadLicenseProcess"></serviceTask>
+  
+    <sequenceFlow id="isLicenseApproved_to_verifyPayment0" sourceRef="isLicenseApproved" targetRef="updateDocuments"></sequenceFlow>
+
+    <sequenceFlow id="deliverLicenseToCustomer_to_endEvent" sourceRef="deliverLicenseToCustomer" targetRef="endEvent"></sequenceFlow>
+    <sequenceFlow id="isLicenseApproved_to_endEvent" sourceRef="isLicenseApproved" targetRef="endEvent"></sequenceFlow>
+
+    <endEvent id="endEvent" name="End"></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_commercialCarrierRoadLicenseProcess">
+    <bpmndi:BPMNPlane bpmnElement="commercialCarrierRoadLicenseProcess" id="BPMNPlane_commercialCarrierRoadLicenseProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="71.0" y="231.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="verifyDocuments" id="BPMNShape_verifyDocuments">
+        <omgdc:Bounds height="55.0" width="105.0" x="150.0" y="221.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="isValidDocuments" id="BPMNShape_isValidDocuments">
+        <omgdc:Bounds height="40.0" width="40.0" x="300.0" y="228.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="rejectedApplication" id="BPMNShape_rejectedApplication">
+        <omgdc:Bounds height="55.0" width="105.0" x="413.0" y="350.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="updateDocuments" id="BPMNShape_updateDocuments">
+        <omgdc:Bounds height="55.0" width="105.0" x="398.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="generatePaymentReceipt" id="BPMNShape_generatePaymentReceipt">
+        <omgdc:Bounds height="72.0" width="111.0" x="413.0" y="211.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="verifyPayment" id="BPMNShape_verifyPayment">
+        <omgdc:Bounds height="55.0" width="105.0" x="569.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="dataEntry" id="BPMNShape_dataEntry">
+        <omgdc:Bounds height="55.0" width="105.0" x="719.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="generateTemporaryLicense" id="BPMNShape_generateTemporaryLicense">
+        <omgdc:Bounds height="80.0" width="105.0" x="870.0" y="209.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvalForLicense" id="BPMNShape_approvalForLicense">
+        <omgdc:Bounds height="55.0" width="105.0" x="1020.0" y="222.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="deliverLicenseToCustomer" id="BPMNShape_deliverLicenseToCustomer">
+        <omgdc:Bounds height="55.0" width="105.0" x="1250.0" y="223.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_endEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="1173.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="isLicenseApproved" id="BPMNShape_isLicenseApproved">
+        <omgdc:Bounds height="40.0" width="40.0" x="1170.0" y="230.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="startevent1_to_verifyDocuments" id="BPMNEdge_startevent1_to_verifyDocuments">
+        <omgdi:waypoint x="106.0" y="248.0"></omgdi:waypoint>
+        <omgdi:waypoint x="150.0" y="248.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="verifyDocuments_to_isValidDocuments" id="BPMNEdge_verifyDocuments_to_isValidDocuments">
+        <omgdi:waypoint x="255.0" y="248.0"></omgdi:waypoint>
+        <omgdi:waypoint x="300.0" y="248.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isValidDocuments_to_rejectedApplication" id="BPMNEdge_isValidDocuments_to_rejectedApplication">
+        <omgdi:waypoint x="320.0" y="268.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="413.0" y="377.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isValidDocuments_to_updateDocuments" id="BPMNEdge_isValidDocuments_to_updateDocuments">
+        <omgdi:waypoint x="320.0" y="228.0"></omgdi:waypoint>
+        <omgdi:waypoint x="450.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="updateDocuments_to_verifyDocuments" id="BPMNEdge_updateDocuments_to_verifyDocuments">
+        <omgdi:waypoint x="398.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="202.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="202.0" y="221.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isValidDocuments_to_generatePaymentReceipt" id="BPMNEdge_isValidDocuments_to_generatePaymentReceipt">
+        <omgdi:waypoint x="340.0" y="248.0"></omgdi:waypoint>
+        <omgdi:waypoint x="413.0" y="247.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="generatePaymentReceipt_to_verifyPayment" id="BPMNEdge_generatePaymentReceipt_to_verifyPayment">
+        <omgdi:waypoint x="524.0" y="247.0"></omgdi:waypoint>
+        <omgdi:waypoint x="569.0" y="247.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="verifyPayment_to_dataEntry" id="BPMNEdge_verifyPayment_to_dataEntry">
+        <omgdi:waypoint x="674.0" y="247.0"></omgdi:waypoint>
+        <omgdi:waypoint x="719.0" y="247.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="dataEntry_to_generateTemporaryLicense" id="BPMNEdge_dataEntry_to_generateTemporaryLicense">
+        <omgdi:waypoint x="824.0" y="247.0"></omgdi:waypoint>
+        <omgdi:waypoint x="870.0" y="249.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="generateTemporaryLicense_to_approvalForLicense" id="BPMNEdge_generateTemporaryLicense_to_approvalForLicense">
+        <omgdi:waypoint x="975.0" y="249.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1020.0" y="249.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isLicenseApproved_to_deliverLicenseToCustomer" id="BPMNEdge_isLicenseApproved_to_deliverLicenseToCustomer">
+        <omgdi:waypoint x="1210.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1250.0" y="250.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="deliverLicenseToCustomer_to_endEvent" id="BPMNEdge_deliverLicenseToCustomer_to_endEvent">
+        <omgdi:waypoint x="1302.0" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1302.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1208.0" y="377.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="rejectedApplication_to_endEvent" id="BPMNEdge_rejectedApplication_to_endEvent">
+        <omgdi:waypoint x="518.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1173.0" y="377.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isLicenseApproved_to_endEvent" id="BPMNEdge_isLicenseApproved_to_endEvent">
+        <omgdi:waypoint x="1190.0" y="270.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1190.0" y="360.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isLicenseApproved_to_verifyPayment0" id="BPMNEdge_isLicenseApproved_to_verifyPayment0">
+        <omgdi:waypoint x="1190.0" y="230.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1189.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="503.0" y="117.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="approvalForLicense_to_isLicenseApproved" id="BPMNEdge_approvalForLicense_to_isLicenseApproved">
+        <omgdi:waypoint x="1125.0" y="249.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1170.0" y="250.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,11 @@
+<beans >
+    <bean id="processEngineConfiguration" class=
+            "org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+        <property name="jdbcUrl"
+                  value="jdbc:postgresql://localhost:5432/activiti" />
+        <property name="jdbcDriver" value="org.postgresql.Driver" />
+        <property name="jdbcUsername" value="activiti_admin" />
+        <property name="jdbcPassword" value="argusadmin" />
+        <property name="databaseSchemaUpdate" value="true" />
+    </bean>
+</beans>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://sourceforge.net/bpmn/definitions/_1612511152107" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="5.3" expressionLanguage="http://www.w3.org/1999/XPath" id="_1612511152107" name="" targetNamespace="http://sourceforge.net/bpmn/definitions/_1612511152107" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <process id="verifyLicenseDetailsProcess" isClosed="false" isExecutable="true" name="Verify License Details" processType="None">
+    <extensionElements>
+      <yaoqiang:description/>
+      <yaoqiang:pageFormat height="841.8897637795276" imageableHeight="831.8897637795276" imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0" orientation="0" width="598.1102362204724"/>
+      <yaoqiang:page background="#FFFFFF" horizontalCount="1" verticalCount="1"/>
+    </extensionElements>
+    <startEvent id="startevent1" isInterrupting="true" name="Start" parallelMultiple="false">
+      <outgoing>flow1</outgoing>
+      <outputSet/>
+    </startEvent>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="verifyLicenseDetails"/>
+    <userTask completionQuantity="1" id="verifyLicenseDetails" implementation="verifyLicenseDetails_verifyLicenseDetailsProcess" isForCompensation="false" name="Verify License Details" startQuantity="1">
+      <incoming>flow1</incoming>
+      <outgoing>flow2</outgoing>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="verifyLicenseDetails" targetRef="isValidLicenseDetails"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="isValidLicenseDetails" name="is license details valid?">
+      <incoming>flow2</incoming>
+      <outgoing>flow3</outgoing>
+      <outgoing>flow4</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="flow3" name="Yes" sourceRef="isValidLicenseDetails" targetRef="approvedLicense">
+      <conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[
+        ]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <serviceTask completionQuantity="1" id="approvedLicense" implementation="approvedLicense_verifyLicenseDetailsProcess" isForCompensation="false" name="License Approved" startQuantity="1">
+      <incoming>flow3</incoming>
+      <outgoing>flow6</outgoing>
+    </serviceTask>
+    <sequenceFlow id="flow4" name="No" sourceRef="isValidLicenseDetails" targetRef="rejectedLicense">
+      <conditionExpression xsi:type="tFormalExpression">
+        <![CDATA[
+        ]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <serviceTask completionQuantity="1" id="rejectedLicense" implementation="rejectedLicense_verifyLicenseDetailsProcess" isForCompensation="false" name="License Rejected" startQuantity="1">
+      <incoming>flow4</incoming>
+      <outgoing>flow5</outgoing>
+    </serviceTask>
+    <sequenceFlow id="flow5" sourceRef="rejectedLicense" targetRef="endevent1"/>
+    <endEvent id="endevent1" name="End">
+      <incoming>flow5</incoming>
+      <inputSet/>
+    </endEvent>
+    <sequenceFlow id="flow6" sourceRef="approvedLicense" targetRef="endevent2"/>
+    <endEvent id="endevent2" name="End">
+      <incoming>flow6</incoming>
+      <inputSet/>
+    </endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="Yaoqiang_Diagram-verifyLicenseDetailsProcess" name="Untitled Diagram" resolution="96.0">
+    <bpmndi:BPMNPlane bpmnElement="verifyLicenseDetailsProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="Yaoqiang-startevent1">
+        <omgdc:Bounds height="32.0" width="32.0" x="171.0" y="211.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="33.0" x="170.5" y="252.32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="verifyLicenseDetails" id="Yaoqiang-verifyLicenseDetails">
+        <omgdc:Bounds height="71.0" width="105.0" x="251.0" y="193.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.8" width="86.0" x="260.5" y="214.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="isValidLicenseDetails" id="Yaoqiang-isValidLicenseDetails" isMarkerVisible="true">
+        <omgdc:Bounds height="42.0" width="42.0" x="400.0" y="208.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="136.0" x="353.0" y="252.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvedLicense" id="Yaoqiang-approvedLicense">
+        <omgdc:Bounds height="55.0" width="105.0" x="485.0" y="120.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.8" width="61.0" x="507.0" y="133.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="rejectedLicense" id="Yaoqiang-rejectedLicense">
+        <omgdc:Bounds height="55.0" width="105.0" x="485.0" y="290.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="32.8" width="55.0" x="510.0" y="303.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="Yaoqiang-endevent1">
+        <omgdc:Bounds height="32.0" width="32.0" x="635.0" y="300.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="27.0" x="637.5" y="341.32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="Yaoqiang-endevent2">
+        <omgdc:Bounds height="32.0" width="32.0" x="635.0" y="130.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="27.0" x="637.5" y="171.32"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="Yaoqiang-flow6">
+        <omgdi:waypoint x="590.0" y="147.5"/>
+        <omgdi:waypoint x="635.0078144082805" y="146.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="6.0" x="609.5" y="137.34"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="Yaoqiang-flow5">
+        <omgdi:waypoint x="590.0" y="317.5"/>
+        <omgdi:waypoint x="635.0078144082805" y="316.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="6.0" x="609.5" y="307.34"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="Yaoqiang-flow4">
+        <omgdi:waypoint x="420.0" y="249.5"/>
+        <omgdi:waypoint x="420.0" y="317.0"/>
+        <omgdi:waypoint x="485.0" y="317.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="21.0" x="409.5" y="306.35"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="Yaoqiang-flow3">
+        <omgdi:waypoint x="420.0" y="209.5"/>
+        <omgdi:waypoint x="420.0" y="148.0"/>
+        <omgdi:waypoint x="485.0" y="148.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="26.0" x="408.75" y="138.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="Yaoqiang-flow2">
+        <omgdi:waypoint x="356.0" y="228.5"/>
+        <omgdi:waypoint x="400.5" y="229.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="6.0" x="375.0" y="219.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="Yaoqiang-flow1">
+        <omgdi:waypoint x="202.99218559171948" y="227.0"/>
+        <omgdi:waypoint x="251.0" y="228.5"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.8" width="6.0" x="224.0" y="218.34"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
